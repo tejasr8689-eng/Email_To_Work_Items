@@ -98,7 +98,7 @@ function createWorkItemsFromUnreadEmails() {
       var messages = threads[i].getMessages();
       var message  = messages[messages.length - 1]; // get latest message in thread
 
-      var subject = message.getSubject();
+      var subject = message.getSubject() || "[No Subject]";
       var body    = message.getPlainBody();
       var from    = message.getFrom();
 
@@ -141,7 +141,7 @@ function createWorkItemsFromUnreadEmails() {
         Logger.log("❌ API Error for: " + subject + " | Code: " + responseCode);
       }
 
-      Utilities.sleep(300); // avoid rate limiting
+      Utilities.sleep(1000); // avoid rate limiting
 
     } catch (e) {
       Logger.log("🔴 Exception on email " + (i + 1) + ": " + e.message);
