@@ -73,6 +73,7 @@ function createWorkItemsFromUnreadEmails() {
   var sprintId       = "52688000000008851";
   var projItemTypeId = "52688000000008895";
   var projPriorityId = "52688000000008889";
+  var epicId         = " "
 
   if (!accessToken) {
     Logger.log("🔴 Aborting: No access token available");
@@ -110,7 +111,8 @@ function createWorkItemsFromUnreadEmails() {
         + projectId   + "/sprints/"
         + sprintId    + "/item/"
         + "?projitemtypeid=" + projItemTypeId
-        + "&projpriorityid=" + projPriorityId;
+        + "&projpriorityid=" + projPriorityId
+        + "&epicid="   + epicId;
 
       // --- Build Payload ---
       var payload = {
