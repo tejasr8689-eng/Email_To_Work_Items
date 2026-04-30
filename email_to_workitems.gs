@@ -133,7 +133,7 @@ else {
 // ===============================================
 
 function createWorkItemsFromUnreadEmails() {
-
+ 
   // --- Config ---
   var accessToken    = acessTokenGenerator();
   var teamId         = "60059184003";
@@ -141,7 +141,10 @@ function createWorkItemsFromUnreadEmails() {
   var sprintId       = "48644000000173090";
   var projItemTypeId = "48644000000173134";
   var projPriorityId = "48644000000173128";
-  var epicId         = "48644000000294099";
+ // var epicId         = "48644000000294099";
+
+  var DEFAULT_EPIC_ID = "48644000000329039"
+
 
   if (!accessToken) {
     Logger.log("🔴 Aborting: No access token available");
@@ -170,10 +173,15 @@ function createWorkItemsFromUnreadEmails() {
       var subject = message.getSubject() || "[No Subject]";
       var body    = message.getBody();
       var from    = message.getFrom();
+      var cc      = message.getHeader("Cc") || message.getHeader("CC") || "";
+
+      Logger.log("CC:",cc);
 
       Logger.log("📨 Processing (" + (i + 1) + "/" + threads.length + "): " + subject);
       var rawAttachments = message.getAttachments();
       Logger.log("📎 Raw attachments count: " + rawAttachments.length);
+      var epicId = resolveEpicCc(message) || DEFAULT_EPIC_ID;
+      Logger.log("📌 Using Epic ID: " + epicId + " for: " + subject);
 
       body = body.replace(/<style[\s\S]*?<\/style>/gi, "").replace(/<script[\s\S]*?<\/script>/gi, "");
 
