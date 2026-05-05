@@ -65,7 +65,7 @@ function checkLabel(labelName) {
 COMPANY_NAME = "CormSquare";
 SUPPORT_EMAIL = "anycompany@gmail.com";
 
-function sendAcknowledgemt(thread,from,subject,ticketId){
+function sendAcknowledgemt(thread,from,subject,ticketId,ccHeader){
 
 var nameMatch  = from.match(/^([^<]+)/);
 var senderName = nameMatch ? nameMatch[1].trim() : "there";
@@ -102,11 +102,26 @@ var senderName = nameMatch ? nameMatch[1].trim() : "there";
       "<hr style='border:none;border-top:1px solid #eee;margin:20px 0;'/>" +
       "<p style='font-size:11px;color:#aaa;'>This is an automated acknowledgment. Our support team will reach out to you shortly.</p>" +
     "</div>";
-  thread.reply(plainBody, {
+  
+    var replyOptions = {
     htmlBody : htmlBody,
-    name : COMPANY_NAME + "Support",
-    replyTo : SUPPORT_EMAIL
-  });
+    name     : COMPANY_NAME + " Support",
+    replyTo  : SUPPORT_EMAIL
+  };
+
+  if (ccHeader && ccHeader.trim() !== "") {
+    replyOptions.cc = ccHeader;   // Gmail accepts the raw "Cc" header string directly
+    Logger.log("📨 Sending acknowledgment CC to: " + ccHeader);
+  }
+
+  thread.reply(plainBody,replyOptions);
+
+
+ // thread.reply(plainBody, {
+ //   htmlBody : htmlBody,
+ //   name : COMPANY_NAME + "Support",
+  //  replyTo : SUPPORT_EMAIL
+  //});
 
 }
 
@@ -249,8 +264,13 @@ function createWorkItemsFromUnreadEmails() {
         
         // var zohoItemId = responseData.itemNo;
        // var ticketId = generateTicketId(zohoItemId);
+
+      // ✅ Pass CC header so acknowledgment reaches all CC'd recipients
+
+        var ccHeader = message.getHeader("Cc") || message.getHeader("CC") || "";
+        sendAcknowledgemt(threads[i], from, subject, ticketId, ccHeader);
          
-        sendAcknowledgemt(threads[i],from,subject,ticketId);
+      //  sendAcknowledgemt(threads[i],from,subject,ticketId);
 
         threads[i].markRead();       // ✅ mark as read
         threads[i].addLabel(label);  // ✅ label so it's never processed again
