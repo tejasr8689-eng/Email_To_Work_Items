@@ -190,7 +190,7 @@ function createWorkItemsFromUnreadEmails() {
       var from    = message.getFrom();
       var cc      = message.getHeader("Cc") || message.getHeader("CC") || "";
 
-      Logger.log("CC:",cc);
+      Logger.log("CC:"+cc);
 
       Logger.log("📨 Processing (" + (i + 1) + "/" + threads.length + "): " + subject);
       var rawAttachments = message.getAttachments();
